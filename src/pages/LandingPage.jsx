@@ -26,29 +26,14 @@ export default function LandingPage() {
       <Box asChild>
         <section>
           <Container size="4" px="4" py="6">
-            <Flex direction="column" align="center" gap="4">
+            <Flex direction="column" align="center" gap="8">
               <Heading size="9" align="center" style={{ letterSpacing: -1 }}>
               Automate Your Nutrition
               </Heading>
               <Text size="4" align="center" color="gray" style={{ maxWidth: 800 }}>
-              Eat a perfect diet, without even thinking about it. ASTRO builds customized meal schedules that will save you time and money.
+              Eat a perfect diet, without even thinking about it. <br></br>
+              ASTRO builds customized meal schedules that will save you time and money.
               </Text>
-              <Flex gap="3" wrap="wrap" mt="3">
-                <Button size="3" variant="solid" asChild>
-                  <Link to="/">Get Started</Link>
-                </Button>
-                <Button size="3" variant="soft" asChild>
-                  <Link to="/demo">
-                    <EyeOpenIcon /> See Demo
-                  </Link>
-                </Button>
-              </Flex>
-              <Flex gap="7" mt="6" wrap="wrap" align="center" justify="center">
-                <Stat value="50K+" label="Active Users" />
-                <Stat value="15K+" label="Recipes Available" />
-                <Stat value="200K+" label="Meal Plans Created" />
-                <Stat value="94%" label="Success Rate" />
-              </Flex>
             </Flex>
           </Container>
         </section>
@@ -58,12 +43,6 @@ export default function LandingPage() {
       <Box asChild>
         <section>
           <Container size="4" px="4" py="6">
-            <Flex direction="column" align="center" gap="2" mb="4">
-              <Heading size="7" align="center">Everything you need for healthy eating</Heading>
-              <Text size="3" align="center" color="gray" style={{ maxWidth: 840 }}>
-                ASTRO combines nutrition science with personalized planning to help you achieve your goals without overspending time or money..
-              </Text>
-            </Flex>
 
             <Grid columns={{ initial: "1", sm: "2", md: "4" }} gap="4">
               <Feature
@@ -96,16 +75,15 @@ export default function LandingPage() {
         <section>
           <Container size="4" px="4" py="7">
             <Flex direction="column" align="center" gap="3">
-              <Heading size="6" align="center">Ready to optimize your eating?</Heading>
-              <Text size="3" align="center" color="gray">
-                Join thousands who save hours each week while staying perfectly nourished.
-              </Text>
-              <Flex gap="3" wrap="wrap" mt="2">
+              <Heading size="6" align="center">Ready to level up your routine?</Heading>
+              <Flex gap="3" wrap="wrap" mt="3">
                 <Button size="3" variant="solid" asChild>
-                  <Link to="/">Start Your Free Account</Link>
+                  <Link to="/">Get Started</Link>
                 </Button>
                 <Button size="3" variant="soft" asChild>
-                  <Link to="/demo">Watch a Demo</Link>
+                  <Link to="/demo">
+                    <EyeOpenIcon /> See Demo
+                  </Link>
                 </Button>
               </Flex>
             </Flex>
