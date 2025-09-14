@@ -81,19 +81,20 @@ npm run dev
 
 ---
 
-## 📅 Dev Plan (5 Sessions)
+## 📅 Next steps
 
-1. **Auth & Routing**
-   Connect Supabase Auth, switch between guest/user views.
+0. **Profile UI:** buy VS Copilot
 
-2. **Database Schema**
-   Create tables in Supabase, connect CRUD.
+1. **Correct Profile page:** should not start as edit, should not lose the activity level and water intake, remove recompute (auto after edit should work properly)
 
-3. **Recipes UI**
-   Add/list/view recipes with Supabase storage images.
+2. **Correct NavBar errors:** the redirections don't work from every page to every page
 
-4. **Meal Plans**
-   Weekly plan page, select recipes per slot, store in DB.
+3. **Complete Profile Supabase:** the profile should be able to gather all the data on the drive report Google Docs
 
-5. **Profile & Export**
-   Profile edit, shopping list export, polish UI.
+4. **Profile UI:** display all relevant info in a clear way on the Profile page, improving copy and including (info) buttons for what's not clear
+
+5. **Start working on the recipes:** ingredients are the base, then nutrients, then recipes/* (pizza, sushi, etc.)
+
+6. **Plan Supabase:** include calendar, how many meals per day and at what time, 
+
+7. **Plan UI:** creating plan creates custom drag&drop calendar for the meals, export function
