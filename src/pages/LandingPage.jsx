@@ -28,11 +28,16 @@ export default function LandingPage() {
           <Container size="4" px="4" py="6">
             <Flex direction="column" align="center" gap="8">
               <Heading size="9" align="center" style={{ letterSpacing: -1 }}>
-              Automate Your Nutrition
+                Automate Your Nutrition
               </Heading>
-              <Text size="4" align="center" color="gray" style={{ maxWidth: 800 }}>
-              Eat a perfect diet, without even thinking about it. <br></br>
-              ASTRO builds customized meal schedules that will save you time and money.
+              <Text
+                size="4"
+                align="center"
+                color="gray"
+                style={{ maxWidth: 800 }}
+              >
+                ASTRO builds custom meal schedules that will save you time and
+                money. <br></br>A perfect diet, on autopilot.
               </Text>
             </Flex>
           </Container>
@@ -43,17 +48,16 @@ export default function LandingPage() {
       <Box asChild>
         <section>
           <Container size="4" px="4" py="6">
-
             <Grid columns={{ initial: "1", sm: "2", md: "4" }} gap="4">
               <Feature
                 icon={<TargetIcon />}
                 title="Personalized Nutrition"
-                desc="Plans tailored to your goals, body composition, and dietary preferences."
+                desc="Plans tailored to your goals, body, and dietary preferences."
               />
               <Feature
                 icon={<ReaderIcon />}
                 title="Recipe Library"
-                desc="Browse thousands of healthy recipes or add your own."
+                desc="Use your own recipes and discover new ones."
               />
               <Feature
                 icon={<CalendarIcon />}
@@ -63,22 +67,24 @@ export default function LandingPage() {
               <Feature
                 icon={<LightningBoltIcon />}
                 title="Quick Export"
-                desc="Export shopping lists in one click."
+                desc="Create grocery lists in one click."
               />
             </Grid>
           </Container>
         </section>
       </Box>
 
-      {/* CTA */}
+      {/* Call To Action */}
       <Box asChild>
         <section>
           <Container size="4" px="4" py="7">
             <Flex direction="column" align="center" gap="3">
-              <Heading size="6" align="center">Ready to level up your routine?</Heading>
+              <Heading size="6" align="center">
+                Ready to level up your routine?
+              </Heading>
               <Flex gap="3" wrap="wrap" mt="3">
                 <Button size="3" variant="solid" asChild>
-                  <Link to="/">Get Started</Link>
+                  <Link to="/profile?demo=1">Get Started</Link>
                 </Button>
                 <Button size="3" variant="soft" asChild>
                   <Link to="/demo">
@@ -99,7 +105,9 @@ function Stat({ value, label }) {
   return (
     <Flex direction="column" align="center">
       <Heading size="6">{value}</Heading>
-      <Text size="2" color="gray">{label}</Text>
+      <Text size="2" color="gray">
+        {label}
+      </Text>
     </Flex>
   );
 }
@@ -121,7 +129,9 @@ function Feature({ icon, title, desc }) {
           {icon}
         </Flex>
         <Heading size="3">{title}</Heading>
-        <Text size="2" color="gray">{desc}</Text>
+        <Text size="2" color="gray">
+          {desc}
+        </Text>
       </Flex>
     </Card>
   );

@@ -52,7 +52,7 @@ src/
 
 ## 🚀 Getting Started
 
-https://github.com/your-username/astro-meals.git
+https://github.com/fabriziocontartese/astro-meals.git
 
 ### Run Dev Server
 
@@ -66,7 +66,6 @@ npm run dev
 
 1. Create a project at [supabase.com](https://supabase.com/).
 2. Create tables:
-
    * `profiles` (id, dob, weight, activity, prefs JSON)
    * `recipes` (id, user\_id, title, description, image\_url, macros JSON)
    * `plans` (id, user\_id, start\_date, name)

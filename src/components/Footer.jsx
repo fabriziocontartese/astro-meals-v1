@@ -1,4 +1,5 @@
 // src/components/Footer.jsx
+
 import { Container } from "@radix-ui/themes";
 
 export default function Footer() {

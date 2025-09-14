@@ -4,7 +4,9 @@ export default function RecipesPage() {
   return (
     <Container py="5">
       <Heading>Recipes</Heading>
-      <Text size="2" color="gray">List, add, and view recipes.</Text>
+      <Text size="2" color="gray">
+        List, add, and view recipes.
+      </Text>
     </Container>
   );
 }
