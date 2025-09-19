@@ -25,7 +25,7 @@ export async function loadProfileInputs(profileId) {
       supabase
         .from("goals_v1")
         .select(
-          "profile_id, update_time, height, weight, active_time, active_level, weight_goal, macro_protein_total, macro_carb_total, macro_fat_total"
+          "profile_id, update_time, height, weight, active_time, active_level, weight_goal, macro_protein_total, macro_carb_total, macro_carb_sugar, macro_carb_fiber, macro_carb_starch, macro_fat_total, macro_fat_saturated, macro_fat_monosaturated, macro_fat_polyunsaturated, macro_fat_trans, micro_vitA, micro_B6, micro_B12, micro_vitC, micro_vitD, micro_vitE, micro_vitK, micro_calcium, micro_copper, micro_iron, micro_magnesium, micro_manganese, micro_phosphorus, micro_potassium, micro_selenium, micro_sodium, micro_zinc"
         )
         .eq("profile_id", profileId)
         .maybeSingle(),
@@ -45,7 +45,7 @@ export async function loadProfileInputs(profileId) {
  * Accepts:
  *   saveProfileInputs(profileId, {
  *     profile: { sex, birth_date, name, surname, language, country_of_origin, address, notifications },
- *     goals:   { height, weight, active_time, weight_goal, active_level? }
+ *     goals:   { height, weight, active_time, weight_goal, active_level?, macro_protein_total?, macro_carb_total?, ... (all macro/micro fields) }
  *   })
  * Returns fresh { profile, goals }.
  */
@@ -70,16 +70,41 @@ export async function saveProfileInputs(profileId, { profile = {}, goals = {} } 
     .upsert(profilePayload, { onConflict: "profile_id" });
   if (pErr) throw pErr;
 
-  // goals_v1 upsert
+  // goals_v1 upsert (now includes all macro/micro fields)
   const goalsPayload = {
     profile_id: profileId,
     height: isFiniteNum(goals.height),
     weight: isFiniteNum(goals.weight),
     active_time: isFiniteInt(goals.active_time),
-    // optional label; safe to omit if you only derive from minutes
     active_level: goals.active_level ?? null,
-    // text enum: 'lose' | 'maintain' | 'gain' (store as-is)
     weight_goal: goals.weight_goal ?? "maintain",
+    macro_protein_total: isFiniteNum(goals.macro_protein_total),
+    macro_carb_total: isFiniteNum(goals.macro_carb_total),
+    macro_carb_sugar: isFiniteNum(goals.macro_carb_sugar),
+    macro_carb_fiber: isFiniteNum(goals.macro_carb_fiber),
+    macro_carb_starch: isFiniteNum(goals.macro_carb_starch),
+    macro_fat_total: isFiniteNum(goals.macro_fat_total),
+    macro_fat_saturated: isFiniteNum(goals.macro_fat_saturated),
+    macro_fat_monosaturated: isFiniteNum(goals.macro_fat_monosaturated),
+    macro_fat_polyunsaturated: isFiniteNum(goals.macro_fat_polyunsaturated),
+    macro_fat_trans: isFiniteNum(goals.macro_fat_trans),
+    micro_vitA: isFiniteNum(goals.micro_vitA),
+    micro_B6: isFiniteNum(goals.micro_B6),
+    micro_B12: isFiniteNum(goals.micro_B12),
+    micro_vitC: isFiniteNum(goals.micro_vitC),
+    micro_vitD: isFiniteNum(goals.micro_vitD),
+    micro_vitE: isFiniteNum(goals.micro_vitE),
+    micro_vitK: isFiniteNum(goals.micro_vitK),
+    micro_calcium: isFiniteNum(goals.micro_calcium),
+    micro_copper: isFiniteNum(goals.micro_copper),
+    micro_iron: isFiniteNum(goals.micro_iron),
+    micro_magnesium: isFiniteNum(goals.micro_magnesium),
+    micro_manganese: isFiniteNum(goals.micro_manganese),
+    micro_phosphorus: isFiniteNum(goals.micro_phosphorus),
+    micro_potassium: isFiniteNum(goals.micro_potassium),
+    micro_selenium: isFiniteNum(goals.micro_selenium),
+    micro_sodium: isFiniteNum(goals.micro_sodium),
+    micro_zinc: isFiniteNum(goals.micro_zinc),
   };
 
   const { error: gErr } = await supabase
