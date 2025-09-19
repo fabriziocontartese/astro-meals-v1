@@ -23,7 +23,7 @@ export default function LandingPage() {
   return (
     <>
       {/* Hero */}
-      <Box asChild>
+      <Box asChild className="hero-section">
         <section>
           <Container size="4" px="4" py="6">
             <Flex direction="column" align="center" gap="8">
@@ -45,14 +45,14 @@ export default function LandingPage() {
       </Box>
 
       {/* Features */}
-      <Box asChild>
+      <Box asChild className="features-section">
         <section>
           <Container size="4" px="4" py="6">
             <Grid columns={{ initial: "1", sm: "2", md: "4" }} gap="4">
               <Feature
                 icon={<TargetIcon />}
                 title="Personalized Nutrition"
-                desc="Plans tailored to your goals, body, and dietary preferences."
+                desc="Create a plan tailored to your health and goals."
               />
               <Feature
                 icon={<ReaderIcon />}
@@ -62,7 +62,7 @@ export default function LandingPage() {
               <Feature
                 icon={<CalendarIcon />}
                 title="Smart Scheduling"
-                desc="Drag and drop meals into your weekly calendar."
+                desc="Drag and drop meals into your weekly plan."
               />
               <Feature
                 icon={<LightningBoltIcon />}
@@ -75,7 +75,7 @@ export default function LandingPage() {
       </Box>
 
       {/* Call To Action */}
-      <Box asChild>
+      <Box asChild className="cta-section">
         <section>
           <Container size="4" px="4" py="7">
             <Flex direction="column" align="center" gap="3">

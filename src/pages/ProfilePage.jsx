@@ -1,238 +1,93 @@
-// javascript
 // filepath: /Users/yaguarete/Desktop/astro-meals-v1/src/pages/ProfilePage.jsx
-// jsx
+
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../auth/hooks/useAuth";
 import { fetchUserEnergyRow, upsertUserMetrics } from "../api/goals";
-import { loadProfileInputs } from "../api/profile";
+import { loadProfileInputs } from "../api/profile"; // returns { profile, goals }
 import { Container, Card, Flex, Heading, Text, Button } from "@radix-ui/themes";
 import { PersonIcon } from "@radix-ui/react-icons";
+import {
+  deriveProfileSummary,
+  computeAgeFromDOB,
+  GOAL_LEVEL_NAMES,
+  goalTextFromLevel,
+} from "../utils/profileTransforms";
 
-function computeAgeFromDOB(dob) {
-  try {
-    const birth = new Date(dob);
-    if (isNaN(birth)) return null;
-    const now = new Date();
-    let age = now.getFullYear() - birth.getFullYear();
-    const m = now.getMonth() - birth.getMonth();
-    if (m < 0 || (m === 0 && now.getDate() < birth.getDate())) age--;
-    return age;
-  } catch {
-    return null;
-  }
-}
 function roundIfNumber(val) {
   return typeof val === "number" && Number.isFinite(val) ? Math.round(val) : val;
 }
 
 export default function ProfilePage() {
   const { user } = useAuth();
-  const [userData, setUserData] = useState(null);
+  const [rows, setRows] = useState({ profile: null, goals: null, energy: null });
   const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState({
-    dob: "",
+    birth_date: "",
     sex: "",
-    height_cm: "",
-    weight_kg: "",
-    weekly_active_min: "",
-    weight_goal_level: "3", // default maintenance
+    height: "",
+    weight: "",
+    active_time: "",
+    weight_goal_level: "3", // 1..5 client-only
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
   const [lastSaveInfo, setLastSaveInfo] = useState(null);
 
-// javascript
-useEffect(() => {
-  if (!user?.id) return;
-  let mounted = true;
-  setLoading(true);
-
-  (async () => {
-    try {
-      // load latest metrics + prefs and the computed energy row in parallel
-      const [profileRes, energyRow] = await Promise.all([
-        loadProfileInputs(user.id), // returns { prefs, metrics }
-        fetchUserEnergyRow(user.id),
-      ]);
-
-      if (!mounted) return;
-
-      const { prefs, metrics } = profileRes ?? {};
-      // metrics may be null if user never saved; energyRow contains computed fields
-      // merge metrics first then energy computed row to allow computed fields to override/show
-      const merged = {
-        ...(metrics ?? {}),
-        ...(prefs ? { prefs } : {}),
-        ...(energyRow ?? {}),
-      };
-      setUserData(merged);
-    } catch (e) {
-      console.error("profile load error:", e);
-      if (mounted) setUserData(null);
-    } finally {
-      if (mounted) setLoading(false);
-    }
-  })();
-
-  return () => { mounted = false; };
-}, [user?.id]);
-
-  // Normalize DB fields
-  const sexRaw = (userData?.sex ?? userData?.Sex ?? userData?.gender ?? "")?.toString?.().toLowerCase?.() ?? "";
-  const sex = sexRaw === "male" || sexRaw === "m" ? "male" : sexRaw === "female" || sexRaw === "f" ? "female" : null;
-
-  const dob = userData?.dob ?? userData?.DOB ?? null;
-  const ageFromDob = dob ? computeAgeFromDOB(dob) : null;
-  const ageRaw = userData?.age_years ?? userData?.Age ?? userData?.age ?? ageFromDob;
-  const age = Number.isFinite(Number(ageRaw)) ? Number(ageRaw) : ageFromDob ?? null;
-
-  const heightRaw = userData?.height_cm ?? userData?.height ?? userData?.Height ?? null;
-  const height = Number.isFinite(Number(heightRaw)) ? Number(heightRaw) : null; // cm
-  const heightDisplay = height > 0 ? `${height} cm` : "Coming Soon";
-
-  const weightRaw = userData?.weight_kg ?? userData?.weight ?? userData?.Weight ?? null;
-  const weight = Number.isFinite(Number(weightRaw)) ? Number(weightRaw) : null; // kg
-  const weightDisplay = weight > 0 ? `${weight} kg` : "Coming Soon";
-
-  const weeklyActiveMinRaw = userData?.weekly_active_min ?? userData?.weeklyActiveMin ?? userData?.activeMinutes ?? null;
-  const weeklyActiveMin = Number.isFinite(Number(weeklyActiveMinRaw)) ? Number(weeklyActiveMinRaw) : null;
-  const weeklyActiveDisplay = weeklyActiveMin != null ? `${weeklyActiveMin} min` : "Coming Soon";
-
-  // Weight goal level from DB or default (1-5)
-  const weightGoalLevelRaw = userData?.weight_goal_level ?? userData?.weightGoalLevel ?? userData?.goal_level ?? null;
-  const weightGoalLevel = Number.isFinite(Number(weightGoalLevelRaw)) ? Number(weightGoalLevelRaw) : null;
-
-  // Map weekly active minutes to activity level 1-5
-  const computeActivityLevelFromMinutes = (mins) => {
-    if (mins == null || !Number.isFinite(mins)) return null;
-    if (mins <= 60) return 1;
-    if (mins <= 180) return 2;
-    if (mins <= 360) return 3;
-    if (mins <= 600) return 4;
-    return 5;
-  };
-  const activityLevelFromMinutes = computeActivityLevelFromMinutes(weeklyActiveMin);
-
-  const tdeeFactorForLevel = { 1: 1.2, 2: 1.375, 3: 1.55, 4: 1.725, 5: 1.9 };
-  const waterMulForLevel = { 1: 0.9, 2: 1, 3: 1.125, 4: 1.25, 5: 1.4 };
-
-  // Determine effective activity level:
-  let activityLevel = null;
-  if (userData?.activity_level != null) {
-    const al = Number(userData.activity_level);
-    activityLevel = Number.isFinite(al) ? al : null;
-  }
-  if (!activityLevel && userData?.activity_factor != null) {
-    const af = Number(userData.activity_factor);
-    if (Number.isFinite(af)) {
-      activityLevel = Object.keys(tdeeFactorForLevel).map(Number).reduce((best, lvl) => {
-        const diff = Math.abs(tdeeFactorForLevel[lvl] - af);
-        const bestDiff = best == null ? Infinity : Math.abs(tdeeFactorForLevel[best] - af);
-        return best == null || diff < bestDiff ? lvl : best;
-      }, null);
-    }
-  }
-  if (!activityLevel) activityLevel = activityLevelFromMinutes;
-
-  const activityLevelNames = {
-    1: "Inactive",
-    2: "Lightly active",
-    3: "Active",
-    4: "Very active",
-    5: "Extremely active",
-  };
-  const activityName = activityLevel ? activityLevelNames[activityLevel] : "Coming Soon";
-
-  // BMR (Mifflin-St Jeor) — prefer DB bmr_kcal if present
-  const bmrRaw = userData?.bmr_kcal ?? userData?.bmr ?? null;
-  const bmrFromDb = Number.isFinite(Number(bmrRaw)) ? Number(bmrRaw) : null;
-  let computedBmr = null;
-  if (!bmrFromDb && sex && age != null && height != null && weight != null) {
-    computedBmr = Math.round(10 * weight + 6.25 * height - 5 * age + (sex === "male" ? 5 : -161));
-  }
-  const bmrFinal = bmrFromDb ?? computedBmr;
-
-  // TDEE prefer DB tdee_kcal then compute
-  const tdeeRaw = userData?.tdee_kcal ?? userData?.tdee ?? null;
-  const tdeeFromDb = Number.isFinite(Number(tdeeRaw)) ? Number(tdeeRaw) : null;
-  const activityFactor = activityLevel ? tdeeFactorForLevel[activityLevel] : null;
-  let computedTdee = null;
-  if (!tdeeFromDb && bmrFinal != null && activityFactor != null) {
-    computedTdee = Math.round(bmrFinal * activityFactor);
-  }
-  const tdeeFinal = tdeeFromDb ?? computedTdee;
-
-  // goal names and used values
-  const goalNames = {
-    1: "Fast Weight Loss (-0.5 kg/week)",
-    2: "Progressive Weight Loss (-0.25 kg/week)",
-    3: "Maintenance",
-    4: "Progressive Weight Gain (+0.1 kg/week)",
-    5: "Fast Weight Gain (+0.15 kg/week)",
-  };
-  const effectiveGoalLevel = Number.isFinite(Number(weightGoalLevel)) ? Number(weightGoalLevel) : 3;
-  const goalName = goalNames[effectiveGoalLevel] ?? "Coming Soon";
-
-  // goal adjustment used internally
-  const goalKcalAdjForLevel = { 1: -500, 2: -250, 3: 0, 4: 250, 5: 500 };
-  const goalAdj = goalKcalAdjForLevel[effectiveGoalLevel] ?? 0;
-
-  // Recommended calories
-  const recommendedCalories = (bmrFinal != null && activityFactor != null) ? Math.round(bmrFinal * activityFactor + goalAdj) : null;
-
-  // Macronutrient splits per activity level
-  const proteinPctForLevel = { 1: 0.35, 2: 0.3, 3: 0.25, 4: 0.2, 5: 0.25 };
-  const carbsPctForLevel = { 1: 0.4, 2: 0.45, 3: 0.45, 4: 0.6, 5: 0.6 };
-  const proteinPct = proteinPctForLevel[activityLevel] ?? 0.25;
-  const carbsPct = carbsPctForLevel[activityLevel] ?? 0.45;
-  const fatPct = Math.max(0, 1 - (proteinPct + carbsPct));
-
-  const proteinGr = recommendedCalories != null ? Math.round((proteinPct * recommendedCalories) / 4) : null;
-  const carbsGr = recommendedCalories != null ? Math.round((carbsPct * recommendedCalories) / 4) : null;
-  const fatsGr = recommendedCalories != null ? Math.round((fatPct * recommendedCalories) / 9) : null;
-
-  // Water ml = weight (kg) × 40 × activity multiplier
-  const waterActivityMul = activityLevel ? waterMulForLevel[activityLevel] : null;
-  const waterMl = (weight != null && weight > 0 && waterActivityMul != null) ? Math.round(weight * 40 * waterActivityMul) : null;
-
-  const personalInfo = {
-    Sex: sex ? sex.charAt(0).toUpperCase() + sex.slice(1) : "Coming Soon",
-    Age: age != null ? `${age} yrs` : "Coming Soon",
-    Height: heightDisplay,
-    Weight: weightDisplay,
-    "Weekly Active Time": weeklyActiveDisplay,
-    "Activity Level": activityName,
-    "Weight Goal": goalName,
-  };
-
-  const dailyValues = {
-    "Basal Metabolic Rate": bmrFinal != null ? `${roundIfNumber(bmrFinal)} kcal/day` : "Coming Soon",
-    "Daily Energy Expenditure": tdeeFinal != null ? `${roundIfNumber(tdeeFinal)} kcal/day` : "Coming Soon",
-    "Recommended Calories": recommendedCalories != null ? `${recommendedCalories} kcal/day` : "Coming Soon",
-    "Rec. Water Intake": waterMl != null ? `${waterMl} ml/day` : "Coming Soon",
-  };
-
-  const macros = {
-    Proteins: proteinGr != null ? `${proteinGr} g (${Math.round(proteinPct * 100)}%)` : "Coming Soon",
-    Carbohydrates: carbsGr != null ? `${carbsGr} g (${Math.round(carbsPct * 100)}%)` : "Coming Soon",
-    Fats: fatsGr != null ? `${fatsGr} g (${Math.round(fatPct * 100)}%)` : "Coming Soon",
-  };
-
-  // populate form when entering edit mode or when userData changes
   useEffect(() => {
-    if (!editing && userData) {
+    if (!user?.id) return;
+    let mounted = true;
+    setLoading(true);
+    (async () => {
+      try {
+        const [bundle, energy] = await Promise.all([
+          loadProfileInputs(user.id), // -> { profile, goals }
+          fetchUserEnergyRow(user.id),
+        ]);
+        if (!mounted) return;
+        const profile = bundle?.profile ?? null;
+        const goals = bundle?.goals ?? null;
+        setRows({ profile, goals, energy: energy ?? null });
+      } catch (e) {
+        console.error("profile load error:", e);
+        if (mounted) setRows({ profile: null, goals: null, energy: null });
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    })();
+    return () => { mounted = false; };
+  }, [user?.id]);
+
+  const summary = deriveProfileSummary({
+    profileRow: rows.profile ?? undefined,
+    goalsRow: rows.goals ?? undefined,
+    energyRow: rows.energy ?? undefined,
+  });
+
+  const sex = summary?.sex ?? null;
+  const birth_date = rows.profile?.birth_date ?? "";
+  const age = summary?.age ?? (birth_date ? computeAgeFromDOB(birth_date) : null);
+  const height = summary?.heightCm ?? null;
+  const weight = summary?.weightKg ?? null;
+  const active_time = rows.goals?.active_time ?? null;
+
+  // infer client goal level from stored text for display
+  const storedGoalText = rows.goals?.weight_goal ?? "maintain";
+  const inferredLevel = storedGoalText === "lose" ? 2 : storedGoalText === "gain" ? 4 : 3;
+
+  useEffect(() => {
+    if (!editing && (rows.profile || rows.goals)) {
       setForm({
-        dob: dob ?? "",
-        sex: sex ?? "",
-        height_cm: height != null && height > 0 ? String(height) : "",
-        weight_kg: weight != null && weight > 0 ? String(weight) : "",
-        weekly_active_min: weeklyActiveMin != null ? String(weeklyActiveMin) : "",
-        weight_goal_level: weightGoalLevel != null ? String(weightGoalLevel) : "3",
+        birth_date: birth_date || "",
+        sex: sex || "",
+        height: height != null && height > 0 ? String(height) : "",
+        weight: weight != null && weight > 0 ? String(weight) : "",
+        active_time: active_time != null ? String(active_time) : "",
+        weight_goal_level: String(inferredLevel),
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userData, editing]);
+  }, [rows.profile, rows.goals, editing]);
 
   function toPositiveNumberOrNull(s) {
     if (s == null || s === "") return null;
@@ -250,41 +105,94 @@ useEffect(() => {
     setSaving(true);
     setError(null);
 
+    const level = Number(form.weight_goal_level);
+    const weight_goal = goalTextFromLevel(level); // map 1–5 -> lose/maintain/gain
+
     const payload = {
-      user_id: user.id,
-      dob: form.dob || null,
+      profile_id: user.id,
+      // profiles_v1
+      birth_date: form.birth_date || null,
       sex: form.sex ? String(form.sex).toLowerCase() : null,
-      height_cm: toPositiveNumberOrNull(form.height_cm),
-      weight_kg: toPositiveNumberOrNull(form.weight_kg),
-      weekly_active_min: toNonNegativeIntOrNull(form.weekly_active_min),
-      weight_goal_level: form.weight_goal_level ? Number(form.weight_goal_level) : null,
+      // goals_v1
+      height: toPositiveNumberOrNull(form.height),
+      weight: toPositiveNumberOrNull(form.weight),
+      active_time: toNonNegativeIntOrNull(form.active_time),
+      weight_goal, // text stored in DB
     };
 
-    console.log("upsertUserMetrics payload:", payload);
     try {
       const res = await upsertUserMetrics(payload);
-      console.log("upsertUserMetrics response:", res);
-      // merge local optimistic update so UI reflects saved values immediately
-      const merged = { ...(userData ?? {}), ...payload };
-      setUserData(merged);
+      const next = {
+        profile: {
+          ...(rows.profile ?? {}),
+          profile_id: user.id,
+          birth_date: payload.birth_date,
+          sex: payload.sex,
+        },
+        goals: {
+          ...(rows.goals ?? {}),
+          profile_id: user.id,
+          height: payload.height,
+          weight: payload.weight,
+          active_time: payload.active_time,
+          weight_goal: payload.weight_goal,
+        },
+        energy: rows.energy ?? null,
+      };
+      setRows(next);
       setLastSaveInfo({ payload, response: res, ts: Date.now() });
-      // re-fetch authoritative row
+
       try {
-        const row = await fetchUserEnergyRow(user.id);
-        console.log("fetchUserEnergyRow after save:", row);
-        if (row) setUserData(row);
+        const energyRefreshed = await fetchUserEnergyRow(user.id);
+        if (energyRefreshed) setRows((prev) => ({ ...prev, energy: energyRefreshed }));
       } catch (e) {
         console.warn("fetch after save failed:", e);
       }
       setEditing(false);
     } catch (e) {
-      console.error("upsertUserMetrics error:", e);
-      const msg = e?.message ?? (e?.error?.message) ?? JSON.stringify(e);
+      const msg = e?.message ?? e?.error?.message ?? JSON.stringify(e);
       setError(msg);
     } finally {
       setSaving(false);
     }
   }
+
+  const personalInfo = {
+    Sex: sex ? sex.charAt(0).toUpperCase() + sex.slice(1) : "Complete profile",
+    Age: age != null ? `${age} yrs` : "Complete profile",
+    Height: height && height > 0 ? `${height} cm` : "Complete profile",
+    Weight: weight && weight > 0 ? `${weight} kg` : "Complete profile",
+    "Weekly Active Time":
+      active_time != null ? `${active_time} min` : "Complete profile",
+    "Activity Level":
+      summary?.activityName ?? "Complete profile",
+    "Weight Goal":
+      GOAL_LEVEL_NAMES[summary?.goalLevel ?? inferredLevel] ?? "Complete profile",
+  };
+
+  const dailyValues = {
+    "Basal Metabolic Rate":
+      summary?.bmr_kcal != null ? `${roundIfNumber(summary.bmr_kcal)} kcal` : "Complete profile",
+    "Daily Energy Expenditure":
+      summary?.tdee_kcal != null ? `${roundIfNumber(summary.tdee_kcal)} kcal` : "Complete profile",
+    "Recommended Calories":
+      summary?.recommended_kcal != null ? `${summary.recommended_kcal} kcal` : "Complete profile",
+    "Rec. Water Intake":
+      summary?.water_ml != null ? `${summary.water_ml / 1000} liters` : "Complete profile",
+  };
+
+  const macros = summary?.macros
+    ? {
+        Proteins: `${summary.macros.protein_g} g (${Math.round(summary.macros.proteinPct * 100)}%)`,
+        Carbohydrates: `${summary.macros.carbs_g} g (${Math.round(summary.macros.carbsPct * 100)}%)`,
+        Fats: `${summary.macros.fat_g} g (${Math.round(summary.macros.fatPct * 100)}%)`,
+      }
+    : {
+        Proteins: "Complete profile",
+        Carbohydrates: "Complete profile",
+        Fats: "Complete profile",
+      };
+
 
   return (
     <Container size="3" px="4" py="6">
@@ -292,7 +200,9 @@ useEffect(() => {
         <Flex justify="between" align="center">
           <div>
             <Heading>Profile Report</Heading>
-            <Text size="2" color="gray">Summary of current metrics and recommended energy targets</Text>
+            <Text size="2" color="gray">
+              This personalized nutrition plan is built from population data and is not a substitute for professional dietary advice.
+            </Text>
           </div>
           <Flex align="center" gap="2">
             {!editing && (
@@ -349,12 +259,21 @@ useEffect(() => {
               <form onSubmit={(e) => { e.preventDefault(); handleSave(); }} style={{ marginTop: 8 }}>
                 <label style={{ display: "block", fontSize: 13, marginBottom: 6 }}>
                   Date of birth
-                  <input type="date" value={form.dob} onChange={(e) => setForm(f => ({ ...f, dob: e.target.value }))} style={{ width: "100%", padding: 6, marginTop: 4 }} />
+                  <input
+                    type="date"
+                    value={form.birth_date}
+                    onChange={(e) => setForm(f => ({ ...f, birth_date: e.target.value }))}
+                    style={{ width: "100%", padding: 6, marginTop: 4 }}
+                  />
                 </label>
 
                 <label style={{ display: "block", fontSize: 13, marginBottom: 6 }}>
                   Sex
-                  <select value={form.sex} onChange={(e) => setForm(f => ({ ...f, sex: e.target.value }))} style={{ width: "100%", padding: 6, marginTop: 4 }}>
+                  <select
+                    value={form.sex}
+                    onChange={(e) => setForm(f => ({ ...f, sex: e.target.value }))}
+                    style={{ width: "100%", padding: 6, marginTop: 4 }}
+                  >
                     <option value="">Prefer not to say</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
@@ -363,28 +282,49 @@ useEffect(() => {
 
                 <label style={{ display: "block", fontSize: 13, marginBottom: 6 }}>
                   Height (cm)
-                  <input type="number" step="0.1" value={form.height_cm} onChange={(e) => setForm(f => ({ ...f, height_cm: e.target.value }))} style={{ width: "100%", padding: 6, marginTop: 4 }} />
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={form.height}
+                    onChange={(e) => setForm(f => ({ ...f, height: e.target.value }))}
+                    style={{ width: "100%", padding: 6, marginTop: 4 }}
+                  />
                 </label>
 
                 <label style={{ display: "block", fontSize: 13, marginBottom: 6 }}>
                   Weight (kg)
-                  <input type="number" step="0.1" value={form.weight_kg} onChange={(e) => setForm(f => ({ ...f, weight_kg: e.target.value }))} style={{ width: "100%", padding: 6, marginTop: 4 }} />
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={form.weight}
+                    onChange={(e) => setForm(f => ({ ...f, weight: e.target.value }))}
+                    style={{ width: "100%", padding: 6, marginTop: 4 }}
+                  />
                 </label>
 
                 <label style={{ display: "block", fontSize: 13, marginBottom: 6 }}>
                   Weekly Active Minutes
-                  <input type="number" value={form.weekly_active_min} onChange={(e) => setForm(f => ({ ...f, weekly_active_min: e.target.value }))} style={{ width: "100%", padding: 6, marginTop: 4 }} />
-                  <small style={{ color: "#666" }}>Include indoor/outdoor exercise, walking, active jobs — minutes per week</small>
+                  <input
+                    type="number"
+                    value={form.active_time}
+                    onChange={(e) => setForm(f => ({ ...f, active_time: e.target.value }))}
+                    style={{ width: "100%", padding: 6, marginTop: 4 }}
+                  />
+                  <small style={{ color: "#666" }}>Minutes per week</small>
                 </label>
 
                 <label style={{ display: "block", fontSize: 13, marginBottom: 6 }}>
                   Weight Goal
-                  <select value={form.weight_goal_level} onChange={(e) => setForm(f => ({ ...f, weight_goal_level: e.target.value }))} style={{ width: "100%", padding: 6, marginTop: 4 }}>
-                    <option value="1">Fast Weight Loss (-0.5 kg/week)</option>
-                    <option value="2">Progressive Weight Loss (-0.25 kg/week)</option>
-                    <option value="3">Maintenance (0 kg/week)</option>
-                    <option value="4">Progressive Weight Gain (+0.1 kg/week)</option>
-                    <option value="5">Fast Weight Gain (+0.15 kg/week)</option>
+                  <select
+                    value={form.weight_goal_level}
+                    onChange={(e) => setForm(f => ({ ...f, weight_goal_level: e.target.value }))}
+                    style={{ width: "100%", padding: 6, marginTop: 4 }}
+                  >
+                    <option value="1">Fast Weight Loss</option>
+                    <option value="2">Progressive Weight Loss</option>
+                    <option value="3">Maintenance</option>
+                    <option value="4">Progressive Weight Gain)</option>
+                    <option value="5">Fast Weight Gain</option>
                   </select>
                 </label>
 
@@ -439,7 +379,9 @@ useEffect(() => {
         </Card>
 
         {loading && <Text color="gray">Loading…</Text>}
-        {!loading && !userData && <Text color="gray">No metrics available — complete your measurements to generate a full report.</Text>}
+        {!loading && !rows.profile && !rows.goals && (
+          <Text color="gray">No metrics available — complete your measurements to generate a full report.</Text>
+        )}
       </Flex>
     </Container>
   );

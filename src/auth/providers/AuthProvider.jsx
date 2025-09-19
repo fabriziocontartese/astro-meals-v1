@@ -1,3 +1,5 @@
+// src/auth/providers/AuthProvider.jsx
+
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 import { AuthContext } from '../contexts/auth-context';
@@ -15,9 +17,10 @@ export default function AuthProvider({ children }) {
       const { data: sub } = supabase.auth.onAuthStateChange(async (_e, s) => {
         setSession(s);
         if (s?.user) {
+          // Updated to use profiles_v1 with correct column names
           await supabase
-            .from('profiles')
-            .upsert({ user_id: s.user.id, display_name: s.user.email ?? '' }, { onConflict: 'user_id' });
+            .from('profiles_v1')
+            .upsert({ profile_id: s.user.id }, { onConflict: 'profile_id' });
         }
       });
       setReady(true);

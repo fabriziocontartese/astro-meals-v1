@@ -1,13 +1,15 @@
-// src/components/Footer.jsx
-
-import { Container } from "@radix-ui/themes";
+import { Box, Container, Text } from '@radix-ui/themes';
 
 export default function Footer() {
   return (
-    <footer>
-      <Container size="3" py="3" style={{ textAlign: "center" }}>
-        <p>© {new Date().getFullYear()} ASTRO Meals</p>
-      </Container>
-    </footer>
+    <Box asChild className="footer">
+      <footer>
+        <Container>
+          <Text align="center" py="4" size="2" color="gray">
+            © 2023 ASTRO Meals. All rights reserved.
+          </Text>
+        </Container>
+      </footer>
+    </Box>
   );
 }

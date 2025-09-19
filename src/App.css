@@ -1,0 +1,15 @@
+/* Landing Page Styles */
+.hero-section {
+  background-color: var(--gray-1);
+  padding: 4rem 0;
+}
+
+.features-section {
+  background-color: var(--gray-2);
+  padding: 4rem 0;
+}
+
+.cta-section {
+  background-color: var(--accent-3);
+  padding: 4rem 0;
+}

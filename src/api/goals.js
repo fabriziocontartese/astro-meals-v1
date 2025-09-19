@@ -1,30 +1,56 @@
-// javascript (replace src/api/goals.js)
+// filepath: /Users/yaguarete/Desktop/astro-meals-v1/src/api/goals.js
+import { supabase } from "../lib/supabaseClient";
 
-import { supabase } from '../lib/supabaseClient';
+/** Resolve auth user id used as profile_id */
+function resolveProfileId(payloadOrId) {
+  if (typeof payloadOrId === "string") return payloadOrId;
+  const pid = payloadOrId?.profile_id ?? payloadOrId?.user_id ?? null;
+  if (!pid) throw new Error("profile_id required");
+  return pid;
+}
+const num = (v) => (Number.isFinite(+v) ? +v : null);
+const int = (v) => (Number.isInteger(+v) ? +v : null);
 
-export async function computeGoals(userId) {
-  const { data, error } = await supabase.rpc('compute_goals', { p_user: userId });
-  if (error) throw error;
-  return data;
+/** Legacy energy view gone. Return null so UI computes client-side. */
+export async function fetchUserEnergyRow(id) {
+  resolveProfileId(id);
+  return null;
 }
 
-export async function fetchUserEnergyRow(userId) {
-  const { data, error } = await supabase
-    .from('user_energy_calcs')
-    .select('age_years,bmr_kcal,tdee_kcal,target_kcal,protein_g,carbs_g,fat_g')
-    .eq('user_id', userId)
-    .maybeSingle();
-  if (error) throw error;
-  return data;
-}
-
-// new: insert metrics for a user, trigger recompute
+/**
+ * Upsert to profiles_v1 and goals_v1.
+ * Accepts { profile_id|user_id, birth_date?, sex?, height?, weight?, active_time?, weight_goal? }
+ */
 export async function upsertUserMetrics(payload) {
-  if (!payload?.user_id) throw new Error('user_id required');
-  const { error: insertErr } = await supabase.from('user_metrics').insert(payload);
-  if (insertErr) throw insertErr;
+  const profile_id = resolveProfileId(payload);
 
-  // recompute goals for this user
-  await computeGoals(payload.user_id);
+  // profiles_v1
+  const { error: pErr } = await supabase
+    .from("profiles_v1")
+    .upsert(
+      {
+        profile_id,
+        birth_date: payload.birth_date ?? null,
+        sex: payload.sex ?? null,
+      },
+      { onConflict: "profile_id" }     // <-- correct conflict target
+    );
+  if (pErr) throw pErr;
+
+  // goals_v1
+  const { error: gErr } = await supabase
+    .from("goals_v1")
+    .upsert(
+      {
+        profile_id,
+        height: num(payload.height),
+        weight: num(payload.weight),
+        active_time: int(payload.active_time),
+        weight_goal: payload.weight_goal ?? "maintain",
+      },
+      { onConflict: "profile_id" }
+    );
+  if (gErr) throw gErr;
+
   return true;
 }

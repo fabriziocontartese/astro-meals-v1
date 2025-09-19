@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Box, Container, Flex, Button, Text } from '@radix-ui/themes';
 import { PersonIcon } from '@radix-ui/react-icons';
 import { useAuth } from '../auth/hooks/useAuth.js';
@@ -6,6 +6,12 @@ import logo from '../../public/logos/ASTRO logo final - black transparent.png';
 
 export default function NavBar() {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   return (
     <Box asChild className="navbar">
@@ -22,12 +28,12 @@ export default function NavBar() {
                 <Button variant="soft" asChild><Link to="/plan">Plan</Link></Button>
                 <Button variant="soft" asChild><Link to="/recipes">Recipes</Link></Button>
                 <Button variant="soft" asChild><Link to="/profile"><PersonIcon /> Profile</Link></Button>
-                <Button variant="solid" onClick={logout}>Log out</Button>
+                <Button variant="solid" onClick={handleLogout}>Log out</Button>
               </Flex>
             ) : (
               <Flex gap="3" align="center">
                 <Button variant="soft" asChild><Link to="/demo">Demo</Link></Button>
-                <Button variant="solid" asChild><Link to="/login">Account</Link></Button>
+                <Button variant="solid" asChild><Link to="/login">Log in</Link></Button>
               </Flex>
             )}
           </Flex>

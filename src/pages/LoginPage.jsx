@@ -42,7 +42,7 @@ export default function LoginPage() {
 
   return (
     <Container py="6" size="3">
-      <Heading mb="4">Account</Heading>
+      <Heading mb="4">Log in or sign up if you’re new.</Heading>
 
       {err && (
         <Callout.Root color="red" mb="3">

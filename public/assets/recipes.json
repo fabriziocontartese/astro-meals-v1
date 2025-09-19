@@ -1,0 +1,250 @@
+[
+    {
+      "Meal_ID": 1,
+      "Meal_Name": "Pizza",
+      "Ingredients": [
+        { "Ingredient_Name": "Champignons", "Weight_g": 100 },
+        { "Ingredient_Name": "Cherry tomatoes", "Weight_g": 100 },
+        { "Ingredient_Name": "Pizza dough", "Weight_g": 500 },
+        { "Ingredient_Name": "Mozzarella", "Weight_g": 250 },
+        { "Ingredient_Name": "Tomato passata", "Weight_g": 330 }
+      ],
+      "Image": "/public/meal-images/recipeX-pizza.jpg"
+    },
+    {
+      "Meal_ID": 2,
+      "Meal_Name": "Curry",
+      "Ingredients": [
+        { "Ingredient_Name": "Carrots", "Weight_g": 100 },
+        { "Ingredient_Name": "Onions", "Weight_g": 100 },
+        { "Ingredient_Name": "Cauliflower", "Weight_g": 200 },
+        { "Ingredient_Name": "Broccoli", "Weight_g": 200 },
+        { "Ingredient_Name": "Sweet Peas", "Weight_g": 200 },
+        { "Ingredient_Name": "Chickpeas", "Weight_g": 750 },
+        { "Ingredient_Name": "Curry paste", "Weight_g": 400 },
+        { "Ingredient_Name": "Coconut cream", "Weight_g": 330 },
+        { "Ingredient_Name": "Tomato sauce", "Weight_g": 330 },
+        { "Ingredient_Name": "Rice", "Weight_g": 600 }
+      ],
+      "Image": "/public/meal-images/recipeX-curry.jpeg"
+    },
+    {
+      "Meal_ID": 3,
+      "Meal_Name": "Sushi",
+      "Ingredients": [
+        { "Ingredient_Name": "Carrot", "Weight_g": 400 },
+        { "Ingredient_Name": "Avocado", "Weight_g": 600 },
+        { "Ingredient_Name": "Cucumber", "Weight_g": 500 },
+        { "Ingredient_Name": "Mango", "Weight_g": 400 },
+        { "Ingredient_Name": "Cream Cheese", "Weight_g": 400 },
+        { "Ingredient_Name": "Algae Sheets", "Weight_g": 50, "Note": "20 units" },
+        { "Ingredient_Name": "Sushi rice", "Weight_g": 750 },
+        { "Ingredient_Name": "Sesame", "Weight_g": 40 }
+      ],
+      "Image": "/public/meal-images/recipeX-sushi.jpeg"
+    },
+    {
+      "Meal_ID": 4,
+      "Meal_Name": "Bean Wraps",
+      "Ingredients": [
+        { "Ingredient_Name": "Carrots", "Weight_g": 100 },
+        { "Ingredient_Name": "Onions", "Weight_g": 100 },
+        { "Ingredient_Name": "Avocado", "Weight_g": 200 },
+        { "Ingredient_Name": "Cucumber", "Weight_g": 300 },
+        { "Ingredient_Name": "Salad", "Weight_g": 200 },
+        { "Ingredient_Name": "Grated cheese", "Weight_g": 400 },
+        { "Ingredient_Name": "Tomato passata", "Weight_g": 500 },
+        { "Ingredient_Name": "Diced tomato can", "Weight_g": 500 },
+        { "Ingredient_Name": "Kidney beans", "Weight_g": 660 },
+        { "Ingredient_Name": "Wraps", "Weight_g": 400 },
+        { "Ingredient_Name": "Spice mix" }
+      ],
+      "Image": "/public/meal-images/recipeX-beanWraps.jpeg"
+    },
+    {
+      "Meal_ID": 5,
+      "Meal_Name": "Lasagna",
+      "Ingredients": [
+        { "Ingredient_Name": "Carrots", "Weight_g": 200 },
+        { "Ingredient_Name": "Onions", "Weight_g": 200 },
+        { "Ingredient_Name": "Zucchini", "Weight_g": 500 },
+        { "Ingredient_Name": "Bell peppers", "Weight_g": 500 },
+        { "Ingredient_Name": "Grated mozzarella", "Weight_g": 500 },
+        { "Ingredient_Name": "Butter", "Weight_g": 125 },
+        { "Ingredient_Name": "Milk", "Weight_g": 750 },
+        { "Ingredient_Name": "Lentils", "Weight_g": 500 },
+        { "Ingredient_Name": "Lasagna sheets", "Weight_g": 200 },
+        { "Ingredient_Name": "Tomato passata", "Weight_g": 1500 }
+      ],
+      "Image": "/public/meal-images/recipeX-lasagna.jpeg"
+    },
+    {
+      "Meal_ID": 6,
+      "Meal_Name": "Chicken Wok",
+      "Ingredients": [
+        { "Ingredient_Name": "Carrots", "Weight_g": 100 },
+        { "Ingredient_Name": "Onions", "Weight_g": 100 },
+        { "Ingredient_Name": "Spring Onion", "Weight_g": 100 },
+        { "Ingredient_Name": "Mushrooms", "Weight_g": 500 },
+        { "Ingredient_Name": "Peas", "Weight_g": 300 },
+        { "Ingredient_Name": "Chicken", "Weight_g": 750 },
+        { "Ingredient_Name": "Rice" },
+        { "Ingredient_Name": "Eggs", "Weight_g": 200 },
+        { "Ingredient_Name": "Soy Sauce", "Weight_g": 50 },
+        { "Ingredient_Name": "Sesame Oil", "Weight_g": 15 }
+      ],
+      "Image": "/public/meal-images/recipeX-chickenWok.jpg"
+    },
+    {
+      "Meal_ID": 7,
+      "Meal_Name": "Lentil Sausage",
+      "Ingredients": [
+        { "Ingredient_Name": "Onions", "Weight_g": 100 },
+        { "Ingredient_Name": "Carrots", "Weight_g": 100 },
+        { "Ingredient_Name": "Potatoes", "Weight_g": 1000 },
+        { "Ingredient_Name": "Sausage", "Weight_g": 1000 },
+        { "Ingredient_Name": "Brown lentils", "Weight_g": 500 },
+        { "Ingredient_Name": "Tomato passata", "Weight_g": 1000 },
+        { "Ingredient_Name": "Parsley", "Weight_g": 50 }
+      ],
+      "Image": "/public/meal-images/recipeX-lentilSausage.jpeg"
+    },
+    {
+      "Meal_ID": 8,
+      "Meal_Name": "Spinach Quinoa Salad",
+      "Ingredients": [
+        { "Ingredient_Name": "Spinach leaves", "Weight_g": 750 },
+        { "Ingredient_Name": "Sweet potatoes", "Weight_g": 750 },
+        { "Ingredient_Name": "Feta", "Weight_g": 400 },
+        { "Ingredient_Name": "Chickpeas", "Weight_g": 400 },
+        { "Ingredient_Name": "Quinoa", "Weight_g": 300 }
+      ],
+      "Image": "/public/meal-images/recipeX-spinachQuinoaSalad.jpeg"
+    },
+    {
+      "Meal_ID": 9,
+      "Meal_Name": "Lentil Salad",
+      "Ingredients": [
+        { "Ingredient_Name": "Beluga lentils", "Weight_g": 500 },
+        { "Ingredient_Name": "Cucumber", "Weight_g": 500 },
+        { "Ingredient_Name": "Feta", "Weight_g": 500 },
+        { "Ingredient_Name": "Red Pepper", "Weight_g": 500 },
+        { "Ingredient_Name": "Red Onions", "Weight_g": 300 },
+        { "Ingredient_Name": "Parsley", "Weight_g": 50 }
+      ],
+      "Image": "/public/meal-images/recipeX-lentilSalad.jpeg"
+    },
+    {
+      "Meal_ID": 10,
+      "Meal_Name": "Shepherd’s Pie",
+      "Ingredients": [
+        { "Ingredient_Name": "Ground Meat", "Weight_g": 600 },
+        { "Ingredient_Name": "Onion", "Weight_g": 150 },
+        { "Ingredient_Name": "Garlic", "Weight_g": 30 },
+        { "Ingredient_Name": "Carrot", "Weight_g": 100 },
+        { "Ingredient_Name": "Peas", "Weight_g": 100 },
+        { "Ingredient_Name": "Corn", "Weight_g": 100 },
+        { "Ingredient_Name": "Potato", "Weight_g": 1000 },
+        { "Ingredient_Name": "Parsley", "Weight_g": 40 },
+        { "Ingredient_Name": "Butter", "Weight_g": 100 }
+      ],
+      "Image": "/public/meal-images/recipeX-shepherdsPie.jpeg"
+    },
+    {
+      "Meal_ID": 11,
+      "Meal_Name": "Super Veggie",
+      "Ingredients": [
+        { "Ingredient_Name": "Black Lentils", "Weight_g": 750 },
+        { "Ingredient_Name": "Broccoli", "Weight_g": 1000 },
+        { "Ingredient_Name": "Cauliflower", "Weight_g": 600 },
+        { "Ingredient_Name": "Mushrooms", "Weight_g": 250 },
+        { "Ingredient_Name": "Garlic", "Weight_g": 20 },
+        { "Ingredient_Name": "Ginger", "Weight_g": 20 },
+        { "Ingredient_Name": "Hemp Seeds", "Weight_g": 20 },
+        { "Ingredient_Name": "Cumin", "Weight_g": 5 }
+      ],
+      "Image": "/public/meal-images/recipeX-superVeggie.jpeg"
+    },
+    {
+      "Meal_ID": 12,
+      "Meal_Name": "Buddah Bowl",
+      "Ingredients": [
+        { "Ingredient_Name": "Sweet Potato", "Weight_g": 1000 },
+        { "Ingredient_Name": "Asparagus", "Weight_g": 250 },
+        { "Ingredient_Name": "Red Pepper", "Weight_g": 400 },
+        { "Ingredient_Name": "Carrots", "Weight_g": 200 },
+        { "Ingredient_Name": "Kale", "Weight_g": 300 },
+        { "Ingredient_Name": "Green Onions", "Weight_g": 200 },
+        { "Ingredient_Name": "Cilantro", "Weight_g": 40 },
+        { "Ingredient_Name": "Lemon", "Weight_g": 100 },
+        { "Ingredient_Name": "Walnuts", "Weight_g": 100 }
+      ],
+      "Image": "/public/meal-images/recipeX-buddahBowl.jpeg"
+    },
+    {
+      "Meal_ID": 13,
+      "Meal_Name": "Roasted Cabbage & Sweet Potato",
+      "Ingredients": [
+        { "Ingredient_Name": "Red Cabbage", "Weight_g": 2000 },
+        { "Ingredient_Name": "Sweet Potato", "Weight_g": 1500 },
+        { "Ingredient_Name": "Almond Milk", "Weight_g": 200 },
+        { "Ingredient_Name": "Pomegranate", "Weight_g": 300 },
+        { "Ingredient_Name": "Pumpkin Seeds", "Weight_g": 150 }
+      ],
+      "Image": "/public/meal-images/recipeX-RoastedCabbage.jpeg"
+    },
+    {
+      "Meal_ID": 14,
+      "Meal_Name": "Beet Poke",
+      "Ingredients": [
+        { "Ingredient_Name": "Beetroot", "Weight_g": 1000 },
+        { "Ingredient_Name": "Radish", "Weight_g": 500 },
+        { "Ingredient_Name": "Avocado", "Weight_g": 500 },
+        { "Ingredient_Name": "Mango", "Weight_g": 500 },
+        { "Ingredient_Name": "Limes", "Weight_g": 300 },
+        { "Ingredient_Name": "Mixed Greens", "Weight_g": 500 },
+        { "Ingredient_Name": "Green Onions", "Weight_g": 200 },
+        { "Ingredient_Name": "Edamame", "Weight_g": 500 },
+        { "Ingredient_Name": "Sesame seeds", "Weight_g": 40 }
+      ],
+      "Image": "/public/meal-images/recipeX-beetPoke.jpeg"
+    },
+    {
+      "Meal_ID": 15,
+      "Meal_Name": "Vegetable Wok",
+      "Ingredients": [
+        { "Ingredient_Name": "Red onion", "Weight_g": 500 },
+        { "Ingredient_Name": "Red cabbage", "Weight_g": 1000 },
+        { "Ingredient_Name": "Broccoli", "Weight_g": 750 },
+        { "Ingredient_Name": "Mushrooms", "Weight_g": 500 },
+        { "Ingredient_Name": "Sugar Snap Peas", "Weight_g": 500 },
+        { "Ingredient_Name": "Cauliflower", "Weight_g": 1000 },
+        { "Ingredient_Name": "Garlic", "Weight_g": 100 },
+        { "Ingredient_Name": "Hemp seeds", "Weight_g": 50 }
+      ],
+      "Image": "/public/meal-images/recipeX-vegetableWok.jpeg"
+    },
+    {
+      "Meal_ID": 16,
+      "Meal_Name": "Lentils & Roasted Veg",
+      "Ingredients": [
+        { "Ingredient_Name": "Hummus", "Weight_g": 750 },
+        { "Ingredient_Name": "Carrots", "Weight_g": 1000 },
+        { "Ingredient_Name": "Shallots", "Weight_g": 500 },
+        { "Ingredient_Name": "Parsley", "Weight_g": 80 },
+        { "Ingredient_Name": "Black lentils", "Weight_g": 500 }
+      ],
+      "Image": "/public/meal-images/recipeX-lentils&RoastedVeg.jpeg"
+    },
+    {
+      "Meal_ID": 17,
+      "Meal_Name": "Stuffed Squash",
+      "Ingredients": [
+        { "Ingredient_Name": "Acorn Squash", "Weight_g": 2000 },
+        { "Ingredient_Name": "Mushrooms", "Weight_g": 500 },
+        { "Ingredient_Name": "Walnuts", "Weight_g": 200 },
+        { "Ingredient_Name": "Cranberries", "Weight_g": 200 }
+      ],
+      "Image": "/public/meal-images/recipeX-stuffedSquash.jpeg"
+    }
+  ]
